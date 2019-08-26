@@ -1,0 +1,138 @@
+@charset "UTF-8";
+
+/*
+!Citi Design
+Description: Cit & Live person Chat
+Author: Stephen Munabo
+Version: 17
+*/
+
+@font-face {
+    font-family: 'Interstate-Light';
+    src: url('../fonts/interstate/Interstate-Light.woff') format('woff');
+}
+
+.hide {
+    display: none;
+}
+
+.floatChatBtn_container {
+    position: absolute;
+    bottom: 100px;
+    right: 30px;
+}
+
+.float_btn {
+    position: relative;
+    background: #002850;
+    border-radius: 26px;
+    width: 364px;
+    height: 52px;
+    border: 1px solid #ffffff!important;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    animation: 3s fadein;
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+@keyframes fadein {
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* Firefox < 16 */
+
+@-moz-keyframes fadein {
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* Safari, Chrome and Opera > 12.1 */
+
+@-webkit-keyframes fadein {
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* Internet Explorer */
+
+@-ms-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+/* Opera < 12.1 */
+
+@-o-keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.float-text {
+    font-family: Interstate-Light;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: -0.04px;
+    text-align: center;
+    line-height: 18px;
+    margin-top: 16px;
+}
+
+.float-text::before {
+    content: url('../images/x.png');
+    margin-right: 5px;
+}
+
+.chat_icon {
+    position: absolute;
+    right: -14px;
+    bottom: -90px;
+    padding: 10px;
+    height: 54px;
+    width: 54px;
+    background-image: url("../images/icon.png");
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.pointer {
+    position: absolute;
+    bottom: -8px;
+    right: 20px;
+    height: 15.8px;
+    width: 15.8px;
+    transform: rotate(-315deg);
+    background: #002850;
+    border: 1px solid #ffffff;
+    border-top-width: 0;
+    border-left-width: 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
