@@ -1,31 +1,21 @@
-function waitForElement(selector) {
-  return new Promise(function(resolve, reject) {
-    var element = document.querySelector(selector);
-
-    if(element) {
-      resolve(element);
-      return;
-    }
-
-    var observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        var nodes = Array.from(mutation.addedNodes);
-        for(var node of nodes) {
-          if(node.matches && node.matches(selector)) {
-            observer.disconnect();
-            resolve(node);
-            return;
-          }
-        };
-      });
+function waitFor(selector) {
+    return new Promise(function (res, rej) {
+        waitForElementToDisplay(selector, 200);
+        function waitForElementToDisplay(selector, time) {
+            if (document.querySelector(selector) != null) {
+                res(document.querySelector(selector));
+            }
+            else {
+                setTimeout(function () {
+                    waitForElementToDisplay(selector, time);
+                }, time);
+            }
+        }
     });
-
-    observer.observe(document.documentElement, { childList: true, subtree: true });
-  });
 }
 
 
-waitForElement("#FlexLoanTopChatBubble").then(function(element) {
+waitFor("#FlexLoanTopChatBubble").then(function() {
     	function ChatFlexLoanBubble() {
 	  document.getElementById("FlexLoanTopChatBubble").style.display = "block";
 	}
