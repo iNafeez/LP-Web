@@ -5,19 +5,6 @@
 			<title>Nafeez WW SDK Example - CRS</title>
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 			<script src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
-		</head>
-		<body>
-			<div class="bindBox">
-				<input class="bindInput" type="text" name="bindInput" />
-				<button class="bindButton" onclick="bind()" title="bind">Bind</button>
-				<div class="bindResults"></div>
-			</div>
-<!--			<div class="logBox">
-				<textarea disabled></textarea>
-			</div>
-!-->
-
-
 <script>
 	var SDK = lpTag.agentSDK || {};
     SDK.bind(chatInfo.rtSessionId, RTSIDbindSuccess, createCallback('Bind'));
@@ -26,7 +13,13 @@ function bindSuccess(data){
     $(".bindResults").html(JSON.stringify(data));
 }
 </script>
-
+		</head>
+		<body>
+			<div class="bindBox">
+				<input class="bindInput" type="text" name="bindInput" />
+				<button class="bindButton" onclick="bind()" title="bind">Bind</button>
+				<div class="bindResults"></div>
+			</div>
 </div>
 </body>
 </html>
