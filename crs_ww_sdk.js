@@ -1,10 +1,6 @@
 	var SDK = lpTag.agentSDK || {};
 $(function() {
-    SDK.init({
-        notificationCallback: getLogFunction('INFO', 'Notification received!'),
-        visitorFocusedCallback: getLogFunction('INFO', 'Visitor Focused received!'),
-        visitorBlurredCallback: getLogFunction('INFO', 'Visitor Blurred received!')
-    });
+    SDK.init();
 });
 
 function bind() {
