@@ -9,4 +9,5 @@ function bind() {
 
 function bindSuccess(data){
     $(".bindResults").html(JSON.stringify(data));
+    console.log(data);
 }
