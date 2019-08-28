@@ -1,7 +1,3 @@
-function ChatFlexLoanBubble() {
-  const displayNoneFlexLoanTopChatBubble = document.getElementById("FlexLoanTopChatBubble");
-  displayNoneFlexLoanTopChatBubble.style.display = displayNoneFlexLoanTopChatBubble.style.display === 'none' ? '' : 'none';
-  displayNoneFlexLoanTopChatBubble.style.transition="opacity 1s";
-  displayNoneFlexLoanTopChatBubble.style.opacity="0";
-}
-setTimeout("ChatFlexLoanBubble()", 5000); // after 5 secs
+var displayNoneFlexLoanTopChatBubble = document.getElementById('FlexLoanTopChatBubble').style;
+displayNoneFlexLoanTopChatBubble.opacity = 1;
+(function fade(){(displayNoneFlexLoanTopChatBubble.opacity-=.1)<0?displayNoneFlexLoanTopChatBubble.display="none":setTimeout(fade,40)})();
