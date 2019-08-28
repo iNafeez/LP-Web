@@ -9,7 +9,7 @@ function waitForElement(elementId, callBack){
   },500)
 };
 
-waitForElement("ChatFlexLoanBubble",function(){
+waitForElement("flexLoanTopChatBubble",function(){
 
   function ChatFlexLoanBubbleDisplay() {
     var flexBubble = document.getElementById("flexLoanTopChatBubble");
