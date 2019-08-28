@@ -5,6 +5,7 @@
 			<title>Nafeez WW SDK Example - CRS</title>
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 			<script src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
+			<script src="https://inafeez.github.io/LP-Web/crs_ww_sdk.js"></script>
 		</head>
 		<body>
 			<div class="bindBox">
@@ -12,32 +13,6 @@
 				<button class="bindButton" onclick="bind()" title="bind">Bind</button>
 				<div class="bindResults"></div>
 			</div>
-<!--			<div class="logBox">
-				<textarea disabled></textarea>
-			</div>
-!-->
-
-
-<script>
-	var SDK = lpTag.agentSDK || {};
-$(function() {
-    SDK.init({
-        notificationCallback: getLogFunction('INFO', 'Notification received!'),
-        visitorFocusedCallback: getLogFunction('INFO', 'Visitor Focused received!'),
-        visitorBlurredCallback: getLogFunction('INFO', 'Visitor Blurred received!')
-    });
-});
-
-function bind() {
-    var bindKey = $(".bindInput").val();
-    SDK.bind(bindKey, bindSuccess, createCallback('Bind'));
-
-function bindSuccess(data){
-    $(".bindResults").html(JSON.stringify(data));
-    getLogFunction('INFO', 'Bind success!')(data);
-}
-
-</script>
 
 </div>
 </body>
