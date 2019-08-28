@@ -12,7 +12,8 @@ function waitForElement(elementId, callBack){
 waitForElement("ChatFlexLoanBubble",function(){
 
   function ChatFlexLoanBubbleDisplay() {
-    document.getElementById("flexLoanTopChatBubble").style.display = "block";
+    var flexBubble = document.getElementById("flexLoanTopChatBubble").
+    flexBubble.style.display = "block";
   }
   setTimeout("ChatFlexLoanBubbleDisplay()", 5000); // after 5 secs
 
