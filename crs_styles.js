@@ -31,5 +31,4 @@ waitForElement("#FlexLoanTopChatBubble").then(function(element) {
 	  displayNoneFlexLoanTopChatBubble.style.display = displayNoneFlexLoanTopChatBubble.style.display === 'none' ? '' : 'none';
 	}
 	setTimeout("ChatFlexLoanBubble()", 5000); // after 5 secs
-);
 });
