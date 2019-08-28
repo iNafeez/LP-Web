@@ -22,12 +22,13 @@
 </script>
 
 <script>
-lpTag.events.bind("lpUnifiedWindow", "conversationInfo", function(data) {
-            console.log(data);
-if (data.state == "ended") {
-    console.log('chat ended');
-
-}}</script>
+function addStyleString(str) {
+    var node = document.createElement('style');
+    node.innerHTML = str;
+    document.body.appendChild(node);
+}
+addStyleString('@keyframes fadein {50%{opacity:0}100%{opacity:1}}');
+</script>
 
 <a href="different_sub.html">Second page with a different sub.</a>
 <div id="test"></div>
