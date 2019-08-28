@@ -9,13 +9,11 @@ function waitForElement(elementId, callBack){
   },500)
 };
 
-waitForElement("flexLoanTopChatBubble",function(){
-
   function ChatFlexLoanBubbleDisplay() {
     var flexBubble = document.getElementById("flexLoanTopChatBubble");
     flexBubble.style.display = "block";
   };
+
+waitForElement("flexLoanTopChatBubble",function(){
   setTimeout("ChatFlexLoanBubbleDisplay()", 5000); // after 5 secs
-
-
 });
