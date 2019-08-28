@@ -7,7 +7,7 @@
 			<script src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
 <script>
 	var SDK = lpTag.agentSDK || {};
-    SDK.bind(chatInfo.rtSessionId, RTSIDbindSuccess, createCallback('Bind'));
+    SDK.bind(chatInfo.rtSessionId, bindSuccess, createCallback('Bind'));
 
 function bindSuccess(data){
     $(".bindResults").html(JSON.stringify(data));
