@@ -1,0 +1,256 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ID Widget</title>
+    <script src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            background: #F0F0F0;
+        }
+        
+        #container {
+            height: 95vh;
+        }
+        
+        #agentPanel {
+            font-family: "Myriad pro", "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", sans-serif;
+        }
+        
+        #agentPanel * {
+            line-height: 1;
+            padding: 0;
+        }
+        
+        #agentPanel table {
+            max-height: 40vh;
+            min-height: 30vh;
+            height: 35vh;
+            width: 100vw;
+        }
+        
+        #agentPanel table td {
+            font-size: 9pt;
+            font-weight: lighter;
+            border: none;
+        }
+        
+        #agentPanel h1 {
+            font-size: 11pt;
+            text-align: center;
+        }
+        
+        #agentPanel tr:nth-child(even) {
+            background: #CCC
+        }
+        
+        #agentPanel tr:nth-child(odd) {
+            background: #FFF
+        }
+        
+        #agentPanel td:nth-child(odd) {
+            font-weight: bold;
+            width: 20%;
+        }
+        
+        #footnote {
+            font-weight: lighter;
+            font-size: 8pt;
+            color: #CCCCCC;
+        }
+        
+        #visitorName {
+            height: 40px !important;
+            min-height: inherit !important;
+        }
+        
+        #visitorName tr {
+            background-color: #CCC !important;
+        }
+        
+        .tableHeader {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="resultLog" style="display: none;">
+            <button onclick="getData()">Get Data</button>
+        </div>
+        <div id="agentPanel" style="display: block;">
+            <h1>Customer Details</h1>
+            <table id="visitorName"></table>
+            <table id="authenticatedValues" style="display: none;">
+                <thead>
+                    <h1 id="authenticatedValuesHeader" class="tableHeader">Authenticated:</h1>
+                </thead>
+            </table>
+            <table id="unauthenticatedValues" style="display: none;">
+                <thead>
+                    <h1 id="unauthenticatedValuesHeader" class="tableHeader">Unauthenticated:</h1>
+                </thead>
+            </table>
+            <span id="footnote">Press Alt + ~ for data log</span>
+        </div>
+    </div>
+    <script>
+        var resultLog = document.getElementById('resultLog');
+        var agentPanel = document.getElementById('agentPanel');
+        var unauthenticatedValues = document.getElementById('unauthenticatedValues');
+        var authenticatedValues = document.getElementById('authenticatedValues');
+        var unauthenticatedValuesHeader = document.getElementById('unauthenticatedValuesHeader');
+        var authenticatedValuesHeader = document.getElementById('authenticatedValuesHeader');
+    
+        var visitorName = document.getElementById('visitorName');
+        var pathToData = "SDE.customerDetails";
+        var pathToAuthenticatedData = "authenticatedData.customerDetails";
+        var pathToAuthenticatedPeronsalData = "authenticatedData.personalInfo";
+        var pathToVisitorName = "visitorInfo.visitorName";
+
+        document.onkeydown = function(e) {
+            var evtobj = window.event ? event : e;
+            if (evtobj.keyCode == 192 && evtobj.altKey) {
+                resultLog.style.display === 'none' ? resultLog.style.display = 'block' : resultLog.style.display = 'none';
+                agentPanel.style.display === 'block' ? agentPanel.style.display = 'none' : agentPanel.style.display = 'block';
+            }
+        };
+
+        //Start logging
+        resultLog.innerHTML += '<div><br><hr><br><strong>Log Start</strong></div>';
+
+        //Init SDK event handlers
+        var notificationHandler = function(data) {
+            resultLog.innerHTML += '<div><br><hr><br><strong>Notification Handler:</strong>' + JSON.stringify(data) + '</div>';
+        };
+
+        // Bind changes to data + callbacks
+        var updateCallback = function(data) {
+            resultLog.innerHTML += '<div><br><hr><br><strong>Bind Success:</strong>' + JSON.stringify(data) + '</div>';
+            showUnauthenticatedData(data);
+        };
+
+        var updateAuthenticatedDataCallback = function(data) {
+            resultLog.innerHTML += '<div><br><hr><br><strong>Bind Success:</strong>' + JSON.stringify(data) + '</div>';
+            showAuthenticatedData(data);
+        };
+
+        var updateAuthenticatedPersonalInfoDataCallback = function(data) {
+            resultLog.innerHTML += '<div><br><hr><br><strong>Bind Success:</strong>' + JSON.stringify(data) + '</div>';
+        };
+
+        var notifyWhenDone = function(err) {
+            if (err) {
+                resultLog.innerHTML += '<div><br><hr><br><strong>Bind Error:</strong>' + JSON.stringify(err) +
+                    '</div>';
+            }
+            resultLog.innerHTML += '<div><br><hr><br><strong>Bind Finished:</strong>' + JSON.stringify(err) +
+                '</div>';
+        };
+
+        lpTag.agentSDK.init({
+            notificationCallback: notificationHandler
+        });
+
+        // bind for unauthenticated data 
+        lpTag.agentSDK.bind(pathToData, updateCallback, notifyWhenDone);
+        // binding for authenticated data
+        lpTag.agentSDK.bind(pathToAuthenticatedPeronsalData, updateAuthenticatedPersonalInfoDataCallback, notifyWhenDone);
+        lpTag.agentSDK.bind(pathToAuthenticatedData, updateAuthenticatedDataCallback, notifyWhenDone);
+        // bind for visitorName
+        lpTag.agentSDK.bind(pathToVisitorName, updateName, notifyWhenDone);
+
+        // Get data for tests
+        function getData() {
+            var onSuccess = function(data) {
+                resultLog.innerHTML += '<div><br><hr><br><strong>Get Success:</strong>' + JSON.stringify(data) + '</div>';
+                updatePanel(data);
+            };
+            var onSuccessName = function(data) {
+                resultLog.innerHTML += '<div><br><hr><br><strong>Get Success:</strong>' + JSON.stringify(data) + '</div>';
+                updateName(data);
+            };
+            var onError = function(err) {
+                resultLog.innerHTML += '<div><br><hr><br><strong>Get Error:</strong>' + JSON.stringify(err) + '</div>';
+            };
+            lpTag.agentSDK.get(pathToData, onSuccess, onError);
+            lpTag.agentSDK.get(pathToAuthenticatedData, onSuccess, onError); // new binding for get to work with auth data
+            lpTag.agentSDK.get(pathToVisitorName, onSuccessName, onError);
+        }
+
+        function updateName(data) {
+            visitorName.innerHTML = getTableRow("Visitor Name", data.newValue);
+        }
+
+        function formattedData(authType, data) {
+            var fieldsArray = ['Brand', 'DBID', 'CIN', 'BIN', 'BLCIN'];
+            var dataNewValue; 
+
+            if (typeof(data.newValue[0]) !== "undefined" &&
+                Array.isArray(data.newValue) == true) {
+                dataNewValue = data.newValue[0];
+
+            } else if (Array.isArray(data.newValue) == false) {
+                dataNewValue = data.newValue;
+            }
+
+            var dataList = dataNewValue[authType];
+            var formattedDataArray = [];
+            dataList = dataList || '-----';
+            var dataArray = dataList.split('-');
+            for (var i in fieldsArray) {
+                formattedDataArray.push(getTableRow(fieldsArray[i], dataArray[i]));
+            }
+
+            return formattedDataArray.toString().split(',').join('');
+        }
+
+        function showUnauthenticatedData(data) {
+            unauthenticatedValues.innerHTML = formattedData('socialId', data);
+            // Only show if authenticated details not shown
+            if (!authDetailsDisplayed()) {
+                unauthenticatedValues.style.display = "table";
+                unauthenticatedValuesHeader.style.display = "block";
+            }
+        }
+
+        function showAuthenticatedData(data) {
+            authenticatedValues.innerHTML = formattedData('customerId', data);
+            authenticatedValues.style.display = "table";
+            authenticatedValuesHeader.style.display = "block";
+
+            // Hide unauthenticated details
+            unauthenticatedValues.style.display = "none";
+            unauthenticatedValuesHeader.style.display = "none";
+        }
+
+        function updatePanel(data, type) {
+            if (type == "auth") {
+                authenticatedValues.innerHTML = formattedData('customerId', data);
+                authenticatedValues.style.display = "table";
+                authenticatedValuesHeader.style.display = "block";
+            }
+            if (type == "unauth") {
+                unauthenticatedValues.innerHTML = formattedData('socialId', data);
+                if (!authDetailsDisplayed()) {
+                    unauthenticatedValues.style.display = "table";
+                    unauthenticatedValuesHeader.style.display = "block";
+                }
+            }
+        }
+
+        // Returns true if authenticated details are currently being displayed
+        function authDetailsDisplayed() {
+            return (authenticatedValues.style.display === "table");
+        }
+
+        function getTableRow(field, value) {
+            return "<tr><td>" + field + "</td><td>" + value + "</td></tr>";
+        }
+    </script>
+</body>
+</html>
