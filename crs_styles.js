@@ -9,11 +9,17 @@ function waitForElement(elementId, callBack){
   },500)
 };
 
-  function ChatFlexLoanBubbleDisplay() {
+function ChatFlexLoanBubbleDisplay() {
     var flexBubble = document.getElementById("flexLoanTopChatBubble");
     flexBubble.style.display = "block";
-  };
+};
 
 waitForElement("flexLoanTopChatBubble",function(){
   setTimeout("ChatFlexLoanBubbleDisplay()", 5000); // after 5 secs
+
+  document.getElementById("closeButtonImg").onclick = function() {
+    var flexBubble = document.getElementById("flexLoanTopChatBubble");
+    flexBubble.style.display = "none";
+};
+
 });
