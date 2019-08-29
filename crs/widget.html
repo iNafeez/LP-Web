@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="https://lpcdn.lpsnmedia.net/webagent/client-SDK.min.js"></script>
+<style>
+table.sessioninfotable {
+	font-family: verdana,arial,sans-serif;
+	font-size:11px;
+	color:#333333;
+	border-width: 1px;
+	border-color: #d3d3d3;
+	border-collapse: collapse;
+	width: 100%;
+	table-layout:fixed;
+     }
+table.sessioninfotable th {
+	border-width: 1px;
+	padding: 2px;
+	border-style: solid;
+	border-color: #d3d3d3;
+	background-color: #dedede;
+	text-align:left;
+	color: #ffffff;
+}
+table.sessioninfotable td {
+	border-width: 1px;
+	padding: 4px;
+	border-style: solid;
+	border-color: #d3d3d3;
+	background-color: #ffffff;
+}
+</style>
+</head>
+<body>
+<table id = "tb" class = "sessioninfotable">
+</table>
+<script>
+// See LivePerson Developers => Agent Experience => Agent Workspace Widget SDK =>
+//		Methods, at https://developers.liveperson.com/agent-workspace-widget-sdk-methods.html
+// Create the recipe for loading the fields in the display.
+// This uses an older lambda function syntax for compatibility with IE11.
+var recipeList = [];
+recipeList.push({
+	itemName: "Customer ID",
+	authSdeType: "ctmrinfo",
+	authValueFunc: function(infoPtr) { return infoPtr.info.customerId; },
+	unAuthValueFunc: function(sdeInfo) { return sdeInfo.customerDetails[0].customerId; }
+});
+recipeList.push({
+	itemName: "Customer Name",
+	authSdeType: "ctmrinfo",
+	authValueFunc: function(infoPtr) { return infoPtr.info.userName; },
+	unAuthValueFunc: function(sdeInfo) { return sdeInfo.customerDetails[0].userName; }
+});
+recipeList.push({
+	itemName: "Conversation ID",
+	authSdeType: "personal",
+	authValueFunc: function(infoPtr) { return infoPtr.personal.contacts[0].phone; },
+	unAuthValueFunc: function(sdeInfo) { return chatInfo.rtSessionId; }
+});
+// Initialize the interface.
+lpTag.agentSDK.init();
+// Define the table within which to display the data.
+var tbl = $("#tb");
+// Prepare the data to display. The values are filled in as they become available.
+var dataToDisplay = [];
+recipeList.forEach( function(curRecipe) {
+	dataToDisplay.push({
+		name: curRecipe.itemName,
+		value: "",
+		valueIsAuth: false
+	});
+});
+// Process a single data element from the data supplied by the Agent SDK. This updates the
+//	specified displayData element following the specified recipe. If the specified data element is
+//	undefined or empty, it is ignored. If it is defined and non-empty, it updates the specified
+//	display data except for the case where the specified data element is not authenticated and
+//	the display data already has an authenticated value.
+// Params -
+//	displayData - The specified display data element potentially being updated.
+//	recipe - The specified recipe for finding the data within the sdeData.
+//	sdeData - The specified data from the Agent SDK.
+//	isAuthenticated - True if this is authenticated data, false if not authenticated.
+var processOneDataItem = function(displayData, recipe, sdeData, isAuthenticated) {
+	// Ignore the value if not authenticated but there is already an authenticated value.
+	if (displayData.valueIsAuth && !isAuthenticated) {
+		return;
+	}
+	// Find the data value.
+	var curValue = null;
+	try {
+		if (isAuthenticated) {
+			var infoPtr = null;
+			sdeData.forEach( function(curInfo) {
+				if (curInfo.type == recipe.authSdeType) {
+					infoPtr = curInfo;
+				}
+			});
+			if (infoPtr == null) {
+				console.log(
+					"SDE type " +
+					recipe.authSdeType +
+					" not found for " +
+					recipe.itemName + ".");
+				return;
+			}
+			curValue = recipe.authValueFunc(infoPtr);
+		} else {
+			curValue = recipe.unAuthValueFunc(sdeData);
+		}
+	} catch (err) {
+		// STUB - eventually don't bother logging this.
+		console.log(
+			"Error getting element: for name: " +
+			recipe.itemName +
+			" error: " +
+			err.toString());
+		return;
+	}
+	// Ignore the value if not defined.
+	if ((curValue == null) || (curValue == "")) {
+		return;
+	}
+	// Set the value.
+	displayData.value = curValue;
+	displayData.valueIsAuth = isAuthenticated;
+	console.log(displayData.name + " <= \"" + curValue + "\"" + (isAuthenticated ? " (auth)" : ""));
+}
+// Process the updated data from the Agent SDK. The table is refreshed based on the updated data.
+//	This updates the data to display with the specified updated data by following the recipe list.
+//	In processing this data, unauthenticated data is applied only if no authenticated value has
+//	already been . This means that authenticated data takes precedence.
+// Param -
+//	updatedData - The updated data. Fields which have not changed may be omitted. This is expected
+//				   to be non-null and should contain key and newValue attributes.
+var processUpdatedData = function (updatedData) {
+	if (updatedData == null) {
+		console.log("processUpdatedData(): updatedData is null.");
+		return;
+	}
+	console.log("+processUpdatedData(): ver:A updatedData:\n" + JSON.stringify(updatedData, null, 2));
+	var dataType = updatedData.key;
+	if (dataType == null) {
+		console.log("processUpdatedData(): updatedData.key is null.");
+		return;
+	}
+	var sdeData = updatedData.newValue;
+	if (sdeData == null) {
+		console.log("processUpdatedData(): updatedData.newValue is null.");
+		return;
+	}
+	var isAuthenticated;
+	switch (dataType) {
+		case "claimsAndAuthType":
+			isAuthenticated = true;
+			try {
+				sdeData = sdeData.claims.lp_sdes;
+				if (sdeData == null) {
+					console.log("processUpdatedData(): updatedData.newValue.claims.lp_sdes is null.");
+					return;
+				}
+				if (!Array.isArray(sdeData)) {
+					console.log(
+						"processUpdatedData(): updatedData.newValue.claims.lp_sdes is not an array.");
+					return;
+				}
+			} catch (err) {
+				console.log(
+					"processUpdatedData(): unable to find newValue.claims.lp_sdes array: " +
+					err.toString());
+				return;
+			}
+			break;
+		case "SDE":
+			isAuthenticated = false;
+			break;
+		default:
+			console.log("processUpdatedData(): updatedData.key = \"" + dataType + "\" data ignored.");
+			return;
+	}
+    for (var idx = 0; idx < dataToDisplay.length; idx += 1) {
+		processOneDataItem(dataToDisplay[idx], recipeList[idx], sdeData, isAuthenticated);
+	}
+	// Refill the table based on the current data.
+	tbl.empty();
+	dataToDisplay.forEach( function(curRowData) {
+		var rowElem = $("<tr />");
+		rowElem.append($("<td style='font-weight:bold;'>").text(curRowData.name));
+		rowElem.append($("<td />").text(curRowData.value));
+		tbl.append(rowElem);
+	});
+}
+// Callback for when an SDE update has been completed. If an error was detected, log the
+//	error information.
+// Param -
+//	err - If non-null, description of an error detected during an SDE update.
+//		   If null, then no error was detected.
+var notifyWhenDone = function (err) {
+	if (err) {
+		console.log(err.toString());
+	}
+	console.log("-notifyWhenDone()");
+}
+// Set up the callbacks which are called when the SDE data is updated.
+lpTag.agentSDK.bind("claimsAndAuthType", processUpdatedData, notifyWhenDone);
+lpTag.agentSDK.bind("SDE", processUpdatedData, notifyWhenDone);
+</script>
+</body>
+</html>
