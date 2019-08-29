@@ -56,7 +56,7 @@ recipeList.push({
 recipeList.push({
 	itemName: "Conversation ID",
 	authSdeType: "personal",
-	authValueFunc: function(infoPtr) { return infoPtr.personal.contacts[0].phone; },
+	authValueFunc: function(infoPtr) { return chatInfo.rtSessionId; },
 	unAuthValueFunc: function(sdeInfo) { return chatInfo.rtSessionId; }
 });
 // Initialize the interface.
