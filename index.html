@@ -20,6 +20,24 @@
     	);
     }
 </script>
+	
+<script>
+//offer impression
+    lpTag.events.bind("LP_OFFERS","OFFER_IMPRESSION",function(data){
+	console.log(data);
+    });
+
+//chat interactive (both agent and visitor have said something)
+
+    lpTag.events.bind("lpUnifiedWindow","conversationInfo",function(data){
+        	console.log(data);
+    });
+
+//chat ended
+    lpTag.events.bind("lpUnifiedWindow","conversationInfo",function(data){
+        console.log(data);
+    });
+</script>
 
 <a href="different_sub.html">Second page with a different sub.</a>
 <div id="test"></div>
