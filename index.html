@@ -22,21 +22,42 @@
 </script>
 	
 <script>
-//offer impression
-    lpTag.events.bind("LP_OFFERS","OFFER_IMPRESSION",function(data){
-	console.log(data);
-    });
+function lpWindowClosed(data, eventInfo){
+    if(window.console && window.JSON){
+        if(eventInfo.eventName === "windowClosed"){
+        	console.log("LP Window Closed.");
+        	lpTag.events.bind("LP_OFFERS", "OFFER_DISPLAY", lpButtonAppeared);
+        }
+    }
+}
 
-//chat interactive (both agent and visitor have said something)
+function lpButtonAppeared(data, eventInfo){
+    if(window.console && window.JSON){
+        // console.log("NAFEEZ: " + JSON.stringify(data) + " triggered by: " +  JSON.stringify(eventInfo));
+        // console.log("LP Buttons Reappeared");
+        if(data.eventName === "SHOW"){
+        	if(data.engagementName.indexOf("Reactive Button") > 0){
+        		console.log("Reactive Button exists on page");
+        		console.log("Attempting to refocus");
+        		citiLPReactiveButton.focus();
+        		console.log("Refocus complete");
+        	}
+        }
+    }
+}
 
-    lpTag.events.bind("lpUnifiedWindow","conversationInfo",function(data){
-        	console.log(data);
-    });
+lpTag.events.bind("lpUnifiedWindow", "windowClosed", lpWindowClosed);
+lpTag.events.bind("LP_OFFERS", "OFFER_DISPLAY", lpButtonAppeared);
 
-//chat ended
-    lpTag.events.bind("lpUnifiedWindow","conversationInfo",function(data){
-        console.log(data);
-    });
+
+	/** find the "Live Chat" reactive button **/
+	var citiLPLiveChatButton = document.getElementsByTagName("img");
+	for(i = 0; i < citiLPLiveChatButton.length; i++) {
+	  // loop through images for the LP button image
+	  if(citiLPLiveChatButton[i].src == "https://online.citi.com/US/ag/assets/branding/chat.png"){
+	  	var citiLPReactiveButton = citiLPLiveChatButton[i];
+	  }
+}
 </script>
 
 <a href="different_sub.html">Second page with a different sub.</a>
