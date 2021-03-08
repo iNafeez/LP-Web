@@ -24,7 +24,9 @@
 
 <script>
 lpTag.events.bind("lpUnifiedWindow","conversationInfo",function(data){console.log(data);});
+lpTag.events.bind("lpUnifiedWindow","minimized",function(data){console.log(data + ": minimized window");});
 </script>
+
 
 <div id="Nafeez"></div>
 </html>
